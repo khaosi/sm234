@@ -31,6 +31,8 @@ Modification:  1)add  notes  to  all  the  functions
 2)add  SM3_SelfTest  function
 ************************************************************************/
 
+#ifndef __SM3_H__
+#define __SM3_H__
 
 
 #include  <string.h>
@@ -79,4 +81,6 @@ void  SM3_process(SM3_STATE  *  md,  unsigned  char  buf[],  int  len);
 void  SM3_done(SM3_STATE  *md,  unsigned  char  *hash);
 void  SM3_256(unsigned  char  buf[],  int  len,  unsigned  char  hash[]); 
 int  SM3_SelfTest();
+
+#endif
  

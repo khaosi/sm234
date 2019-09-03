@@ -17,6 +17,9 @@ Modification:  1)add  notes  to  all  the  functions
 2)add  SM4_SelfCheck  function
 ************************************************************/
 
+#ifndef __SM4_H__
+#define __SM4_H__
+
 #include<stdio.h>
 
 //rotate n bits to the left in a 32bit buffer
@@ -80,4 +83,4 @@ Called  By: Input: Output: Return:
 1 fail ; 0 success Others:
 ************************************************************/ 
 int  SM4_SelfCheck();
- 
+#endif

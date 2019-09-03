@@ -1,6 +1,6 @@
-#include "stdio.h"
-#include  "sm3.h"
-#include  "sm4.h"
+#include <stdio.h>
+#include "../inc/sm3.h"
+#include "../inc/sm4.h"
 
 
 int main(int argc, char **argv)

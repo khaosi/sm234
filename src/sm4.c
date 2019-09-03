@@ -18,9 +18,7 @@ Modification:  1)add  notes  to  all  the  functions
 2)add  SM4_SelfCheck  function
 ************************************************************/
 
-
-
-#include  "sm4.h"
+#include "../inc/sm4.h"
 
 unsigned int  SM4_CK[32] = { 0x00070e15,  0x1c232a31,  0x383f464d,  0x545b6269,\
 0x70777e85, 0x8c939aa1, 0xa8afb6bd, 0xc4cbd2d9,\

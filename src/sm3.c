@@ -25,8 +25,8 @@ Author:	Mao  Yingying,  Huo  Lili Modification:  1)add  notes  to  all  the  fun
 2)add  SM3_SelfTest  function
 **************************************************************************/
 
-#include "sm3.h"
-#include "sm2_sv.h"
+#include "../inc/sm3.h"
+//#include "sm2_sv.h"
 
 /**************************************************************** Function:	BiToW
 Description:	calculate  W  from  Bi Calls:
