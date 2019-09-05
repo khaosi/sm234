@@ -158,30 +158,30 @@ Output:
 PlainText[]:  output  text Return:null
 Others:
 ************************************************************/
-void  SM4_Decrypt(unsigned  char  MK[],unsigned  char  CipherText[],unsigned  char  PlainText[])
+void SM4_Decrypt(unsigned  char  MK[],unsigned  char  CipherText[],unsigned  char  PlainText[])
 {
-unsigned  int  rk[32],X[36],tmp,buf; int i,j;
+	unsigned int rk[32], X[36],tmp,buf; 
+	int i,j;
+	
+	SM4_KeySchedule(MK,rk);
+	
+	for(j=0;j<4;j++)
+	{
+	    X[j]=(CipherText[j*4]<<24) | (CipherText[j*4+1]<<16) | (CipherText[j*4+2]<<8) | (CipherText[j*4+3]);
+	}
+	
+	for(i=0;i<32;i++)
+	{
+	    tmp = X[i+1]^X[i+2]^X[i+3]^rk[31-i];
+	
+		//nonlinear operation
+		buf=  (SM4_Sbox[(tmp  >>  24)  &  0xFF])  <<  24
+		|(SM4_Sbox[(tmp  >>  16)  &  0xFF])  <<  16
+		|(SM4_Sbox[(tmp  >>  8)    &  0xFF])  <<  8
+		|(SM4_Sbox[tmp  &  0xFF]);
 
-SM4_KeySchedule(MK,rk);
-
-
-for(j=0;j<4;j++)
-{
-    X[j]=(CipherText[j*4]<<24) | (CipherText[j*4+1]<<16) | (CipherText[j*4+2]<<8) | (CipherText[j*4+3]);
-}
-
-for(i=0;i<32;i++)
-{
-    tmp  =  X[i+1]^X[i+2]^X[i+3]^rk[31-i];
-
-    //nonlinear operation
-    buf=  (SM4_Sbox[(tmp  >>  24)  &  0xFF])  <<  24
-    |(SM4_Sbox[(tmp  >>  16)  &  0xFF])  <<  16
-    |(SM4_Sbox[(tmp  >>  8)    &  0xFF])  <<  8
-    |(SM4_Sbox[tmp  &  0xFF]);
-
-    //linear operation
-    X[i+4]=X[i]^(buf^SM4_Rotl32((buf),2) ^ SM4_Rotl32((buf),10) ^ SM4_Rotl32((buf),18) ^ SM4_Rotl32((buf),24));
+		//linear operation
+		X[i+4]=X[i]^(buf^SM4_Rotl32((buf),2) ^ SM4_Rotl32((buf),10) ^ SM4_Rotl32((buf),18) ^ SM4_Rotl32((buf),24));
     }
 
     for(j=0;j<4;j++)

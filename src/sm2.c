@@ -567,6 +567,87 @@ int SM2_Sign(unsigned  char  *message, int  len, unsigned  char  ZA[], unsigned 
 	return 0;
 }
 
+//-----------------------------------------------------------------------------
+// Function Name  : SM2_Sign_With_E
+// Description    : 
+// Input          : 
+// Output         : 
+// Return         : 
+// Notice         : 去掉ZA||M计算，直接输入H(ZA||M)
+//-----------------------------------------------------------------------------
+int SM2_Sign_With_E(char *pHash, char rand[], char d[], char R[], char S[])
+{
+	int i;
+	char hash[SM3_len / 8];
+
+	big  dA, r, s, e, k, KGx, KGy;
+	big  rem, rk, z1, z2;
+	epoint  *KG;
+
+	i = SM2_Init();
+	if (i)
+		return i;
+
+	//initiate 
+	dA = mirvar(0);
+	e = mirvar(0);
+	k = mirvar(0);
+	KGx = mirvar(0);
+	KGy = mirvar(0);
+	r = mirvar(0);
+	s = mirvar(0);
+	rem = mirvar(0);
+	rk = mirvar(0);
+	z1 = mirvar(0);
+	z2 = mirvar(0);
+
+	bytes_to_big(SM2_NUMWORD, d, dA);//cinstr(dA, d);
+	KG = epoint_init();
+
+	//step1,set  M=ZA||M
+	
+
+	//step2,generate  e=H(M) 
+	memmove(hash, pHash, SM3_len / 8);
+	bytes_to_big(SM3_len / 8, hash, e);
+
+	//step3:generate  k 
+	bytes_to_big(SM3_len / 8, rand, k);
+
+	//step4:calculate  kG 
+	ecurve_mult(k, G, KG);
+
+	//step5:calculate  r 
+	epoint_get(KG, KGx, KGy);
+	add(e, KGx, r);
+	divide(r, para_n, rem);
+
+	//judge  r=0  or  n+k=n? 
+	add(r, k, rk);
+	if (Test_Zero(r) | Test_n(rk))
+		return  ERR_GENERATE_R;
+
+	//step6:generate  s
+	incr(dA, 1, z1);
+
+	xgcd(z1, para_n, z1, z1, z1);
+	multiply(r, dA, z2);
+	divide(z2, para_n, rem);
+	subtract(k, z2, z2);
+	add(z2, para_n, z2);
+	multiply(z1, z2, s);
+	divide(s, para_n, rem);
+
+	//judge  s=0? 
+	if (Test_Zero(s))
+		return ERR_GENERATE_S;
+
+	big_to_bytes(SM2_NUMWORD, r, R, TRUE);
+	big_to_bytes(SM2_NUMWORD, s, S, TRUE);
+
+	return 0;
+}
+
 /****************************************************************
  * Function:	SM2_Verify
 Description:	SM2  verification  algorithm
@@ -666,6 +747,91 @@ int SM2_Verify(unsigned  char  *message, int  len, unsigned  char  ZA[], unsigne
 		return  ERR_DATA_MEMCMP;
 }
 
+//-----------------------------------------------------------------------------
+// Function Name  : SM2_Verify_With_E
+// Description    : 
+// Input          : 
+// Output         : 
+// Return         : 
+// Notice         : 去掉ZA||M计算，直接输入H(ZA||M)
+//-----------------------------------------------------------------------------
+int SM2_Verify_With_E(char *pHash, char Px[], char Py[], char R[], char S[])
+{
+	char hash[SM3_len / 8];
+	int i;
+
+	big  PAx, PAy, r, s, e, t, rem, x1, y1;
+	big  RR;
+	epoint  *PA, *sG, *tPA;
+
+	i = SM2_Init();
+	if (i)
+		return i;
+
+	PAx = mirvar(0);
+	PAy = mirvar(0);
+	r = mirvar(0);
+	s = mirvar(0);
+	e = mirvar(0);
+	t = mirvar(0);
+	x1 = mirvar(0);
+	y1 = mirvar(0);
+	rem = mirvar(0);
+	RR = mirvar(0);
+
+	PA = epoint_init();
+	sG = epoint_init();
+	tPA = epoint_init();
+
+	bytes_to_big(SM2_NUMWORD, Px, PAx);
+	bytes_to_big(SM2_NUMWORD, Py, PAy);
+
+	bytes_to_big(SM2_NUMWORD, R, r);
+	bytes_to_big(SM2_NUMWORD, S, s);
+
+	if (!epoint_set(PAx, PAy, 0, PA))//initialise  public  key
+	{
+		return  ERR_PUBKEY_INIT;
+	}
+
+	//step1:  test  if  r  belong  to  [1,n-1] 
+	if (Test_Range(r))
+		return  ERR_OUTRANGE_R;
+
+	//step2:  test  if  s  belong  to  [1,n-1]
+
+	if (Test_Range(s))
+		return  ERR_OUTRANGE_S;
+
+	//step3,generate  M
+
+
+	//step4,generate  e=H(M) 
+	memmove(hash, pHash, SM3_len / 8);
+	bytes_to_big(SM3_len / 8, hash, e);
+
+	//step5:generate  t 
+	add(r, s, t);
+	divide(t, para_n, rem);
+
+	if (Test_Zero(t))
+		return  ERR_GENERATE_T;
+
+	//step  6:  generate(x1,y1) 
+	ecurve_mult(s, G, sG);
+	ecurve_mult(t, PA, tPA);
+	ecurve_add(sG, tPA);
+	epoint_get(tPA, x1, y1);
+
+	//step7:generate  RR 
+	add(e, x1, RR);
+	divide(RR, para_n, rem);
+
+	if (compare(RR, r) == 0)
+		return 0;
+	else
+		return  ERR_DATA_MEMCMP;
+}
 
 /**************************************************************** 
  * Function:	SM2_ENC_SelfTest

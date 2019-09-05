@@ -18,6 +18,8 @@
 #include "../inc/sm2.h"
 #include "../inc/miracl.h"
 
+ 
+
 extern BOOL AlgSmTest(void);
 
 int main(int argc, char **argv)
@@ -25,24 +27,25 @@ int main(int argc, char **argv)
     int iResult;
 
 	//todo miracl需要初始化
+#if 0
+    iResult = SM3_SelfTest();
 
- //   iResult = SM3_SelfTest();
+    printf("SM3_SelfTest = %04x \r\n", iResult);
 
- //   printf("SM3_SelfTest = %04x \r\n", iResult);
+	iResult = SM4_SelfTest();
 
-	//iResult = SM4_SelfTest();
-
-	//printf("SM4_SelfTest = %04x \r\n", iResult);	
-	//
-	//
+	printf("SM4_SelfTest = %04x \r\n", iResult);	
+	
+	
 	iResult = SM2_EnDeTest();
 
 	printf("SM2_EnDeTest = %04x \r\n", iResult);	
-	//
-	//
-	//iResult = SM2_SignVerifyTest();
+	
+	
+	iResult = SM2_SignVerifyTest();
 
-	//printf("SM2_SignVerifyTest() = %04x \r\n", iResult);
+	printf("SM2_SignVerifyTest() = %04x \r\n", iResult);
+#endif
 
 	AlgSmTest();
 

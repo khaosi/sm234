@@ -72,7 +72,9 @@ int SM2_Encrypt(unsigned  char*  randK,epoint  *pubKey,unsigned  char  M[],int  
 int SM2_Decrypt(big  dB,unsigned  char  C[],int  Clen,unsigned  char  M[]);
 
 int SM2_Sign(unsigned  char  *message, int  len, unsigned  char  ZA[], unsigned  char  rand[], unsigned char  d[], unsigned  char  R[], unsigned  char  S[]);
+int SM2_Sign_With_E(char * pHash, char rand[], char d[], char R[], char S[]);
 int SM2_Verify(unsigned  char  *message, int  len, unsigned  char  ZA[], unsigned  char  Px[], unsigned char  Py[], unsigned  char  R[], unsigned  char  S[]);
+int SM2_Verify_With_E(char * pHash, char Px[], char Py[], char R[], char S[]);
 
 
 int SM2_SignVerifyTest();

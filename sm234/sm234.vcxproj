@@ -20,7 +20,7 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
-    <ProjectGuid>{F393D21A-7DCF-47C2-B532-E70FA518D583}</ProjectGuid>
+    <ProjectGuid>{61C2AB60-F2F1-4268-B4FA-DEC4367B20D8}</ProjectGuid>
     <RootNamespace>sm234</RootNamespace>
     <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
@@ -69,9 +69,7 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <LibraryPath>E:\git\sm234\inc;$(LibraryPath)</LibraryPath>
-  </PropertyGroup>
+  <PropertyGroup />
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -126,14 +124,14 @@
     <ClInclude Include="..\inc\sm4.h" />
   </ItemGroup>
   <ItemGroup>
+    <Library Include="..\inc\miracl.lib" />
+  </ItemGroup>
+  <ItemGroup>
     <ClCompile Include="..\src\main.c" />
     <ClCompile Include="..\src\sm.c" />
     <ClCompile Include="..\src\sm2.c" />
     <ClCompile Include="..\src\sm3.c" />
     <ClCompile Include="..\src\sm4.c" />
-  </ItemGroup>
-  <ItemGroup>
-    <Library Include="..\inc\miracl.lib" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
