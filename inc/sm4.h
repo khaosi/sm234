@@ -1,9 +1,7 @@
-/************************************************************ FileName:
-sm4.h
-Version:
-SM4_V1.0
-Date:
-Sep 13,2016
+/************************************************************ 
+FileName:sm4.h
+Version:SM4_V1.0
+Date:Sep 13,2016
 Description:
 This headfile provide macro defination, parameter definition and function declaration needed in  SM4  algorithm  implement.
 Function  List:
@@ -16,7 +14,6 @@ Author:Mao  Yingying,Huo  Lili
 Modification:  1)add  notes  to  all  the  functions
 2)add  SM4_SelfCheck  function
 ************************************************************/
-
 #ifndef __SM4_H__
 #define __SM4_H__
 
@@ -26,61 +23,9 @@ Modification:  1)add  notes  to  all  the  functions
 
 #define SM4_Rotl32(buf,  n)  (((buf)<<n)|((buf)>>(32-n)))
 
+void SM4_KeySchedule(unsigned  char  MK[],    unsigned  int  rk[]);
+void SM4_Encrypt(unsigned  char  MK[],unsigned  char  PlainText[],unsigned  char  CipherText[]);
+void SM4_Decrypt(unsigned  char  MK[],unsigned  char  CipherText[],  unsigned  char  PlainText[]);
+int  SM4_SelfTest();
 
-/************************************************************ 
- * Function:
-void  SM4_KeySchedule(unsigned  char  MK[],    unsigned  int  rk[]); Description:
-Generate  round  keys
-Calls: Called  By:
-SM4_Encrypt; SM4_Decrypt;
-Input:
-MK[]:  Master  key
-Output:
-rk[]: round keys Return:null
- 
-Others:
-************************************************************/ 
-void  SM4_KeySchedule(unsigned  char  MK[],    unsigned  int  rk[]);
-
-
-
-/************************************************************ 
- * Function:
-void  SM4_Encrypt(unsigned  char  MK[],unsigned  char  PlainText[],unsigned  char CipherText[]);
-Description:
-Encryption  function
-Calls:
-SM4_KeySchedule
-Called  By: Input:
-MK[]:  Master  key PlainText[]:  input  text
-Output:
-CipherText[]:  output  text Return:null
-Others:
-************************************************************/
-void  SM4_Encrypt(unsigned  char  MK[],unsigned  char  PlainText[],unsigned  char  CipherText[]);
-
-
-
-/************************************************************ 
- * Function:
-void SM4_Decrypt(unsigned char MK[],unsigned char CipherText[], unsigned char PlainText[]); Description:
-Decryption  function Calls:
-SM4_KeySchedule Called  By:
-Input:
-MK[]:  Master  key CipherText[]:  input  text
-Output:
-PlainText[]:  output  text Return:null
-Others:
-************************************************************/
-void  SM4_Decrypt(unsigned  char  MK[],unsigned  char  CipherText[],  unsigned  char  PlainText[]);
- 
-/************************************************************ 
- * Function:
-int  SM4_SelfCheck() Description:
-Self-check  with  standard  data Calls:
-SM4_Encrypt; SM4_Decrypt;
-Called  By: Input: Output: Return:
-1 fail ; 0 success Others:
-************************************************************/ 
-int  SM4_SelfCheck();
 #endif

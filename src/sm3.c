@@ -26,7 +26,7 @@ Author:	Mao  Yingying,  Huo  Lili Modification:  1)add  notes  to  all  the  fun
 **************************************************************************/
 
 #include "../inc/sm3.h"
-//#include "sm2_sv.h"
+#include "../inc/sm2.h"
 
 /**************************************************************** Function:	BiToW
 Description:	calculate  W  from  Bi Calls:
@@ -53,14 +53,15 @@ void BiToW(unsigned  int  Bi[],  unsigned  int  W[])
     }
 }
 
-/***************************************************************** Function:	WToW1
+/***************************************************************** 
+Function:	WToW1
 Description:	calculate  W1  from  W Calls:
 Called  By:	SM3_compress
 Input:	W[64]
 Output:	W1[64]
 Return:	null Others:
 *****************************************************************/ 
-void  WToW1(unsigned  int  W[],  unsigned  int  W1[])
+void WToW1(unsigned  int  W[],  unsigned  int  W1[])
 {
     int i; 
     for(i=0;i<=63;i++)
@@ -69,7 +70,8 @@ void  WToW1(unsigned  int  W[],  unsigned  int  W1[])
     }
 }
 
-/****************************************************************** Function:	CF
+/****************************************************************** 
+Function:	CF
 Description:	calculate  the  CF  compress  function  and  update  V Calls:
 Called  By:	SM3_compress
  
@@ -369,11 +371,10 @@ void SM3_256(unsigned  char  buf[],  int  len,  unsigned  char  hash[])
     SM3_STATE  md;
     SM3_init(&md); 
     SM3_process(&md,  buf,  len);
-    
     SM3_done(&md,  hash);
 }
 
-#if 0
+#if 1
 
 /****************************************************************************** 
 Function:	SM3_KDF
@@ -461,7 +462,7 @@ Return:	0	//the  SM3  operation  is  correct
 1	//the  sm3  operation  is  wrong
 Others:
 *******************************************************************************/ 
-int  SM3_SelfTest()
+int SM3_SelfTest()
 {
     unsigned int i=0,a=1,b=1;
     unsigned char Msg1[3]={0x61,0x62,0x63}; 

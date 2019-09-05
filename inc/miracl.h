@@ -93,7 +93,7 @@ the CertiVox MIRACL Crypto SDK with a closed source product.               *
 
 /* To avoid name clashes - undefine this */
 
-/* #define compare mr_compare */
+#define compare mr_compare 
 
 #ifdef MR_AVR
 #include <avr/pgmspace.h>

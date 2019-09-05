@@ -203,7 +203,7 @@ SM4_Encrypt; SM4_Decrypt;
 Called  By: Input: Output: Return:
 1 fail ; 0 success Others:
 ************************************************************/ 
-int  SM4_SelfCheck()
+int SM4_SelfTest()
 {
     int i;
     //Standard  data   
