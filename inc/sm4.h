@@ -17,7 +17,7 @@ Modification:  1)add  notes  to  all  the  functions
 #ifndef __SM4_H__
 #define __SM4_H__
 
-#include<stdio.h>
+#include <stdio.h>
 
 //rotate n bits to the left in a 32bit buffer
 

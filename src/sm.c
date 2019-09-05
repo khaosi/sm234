@@ -12,29 +12,14 @@
 * All Rights Reserved.
 */
 
-#include "../inc/sm.h" 
-#include "../inc/sm2.h" 
-#include "../inc/sm3.h" 
-#include "../inc/sm4.h" 
+#include "sm.h" 
+#include "sm2.h" 
+#include "sm3.h" 
+#include "sm4.h" 
 
-#define BIT09				(0x00000200)
-#define BIT08				(0x00000100)
-#define BIT07				(0x00000080)
-#define BIT06				(0x00000040)
-#define BIT05				(0x00000020)
-#define BIT04				(0x00000010)
-#define BIT03				(0x00000008)
-#define BIT02				(0x00000004)
-#define BIT01				(0x00000002)
-#define BIT00				(0x00000001)
 
-//sms4
-#define SMS4_ECB_MODE	0x00
-#define SMS4_CBC_MODE	0x02
-#define SMS4_ENCRYPT	0x00
-#define SMS4_DECRYPT	0x01
 
-#define TRACE	printf    
+   
 void TraceBuf(unsigned char *string, unsigned int length)
 {
 	unsigned int i = 0;
@@ -83,7 +68,7 @@ void TraceStrBuf(char * str, unsigned char *ucHex, unsigned int length)
 // Return         : 
 // Notice         : 
 //-----------------------------------------------------------------------------
-BOOL AlgSm3(char* pIn, unsigned int uiLen, char* pHash, char ucMode)
+int AlgSm3(char* pIn, unsigned int uiLen, char* pHash, char ucMode)
 {
 	SM3_256(pIn, uiLen, pHash);
 	return TRUE;
@@ -221,7 +206,7 @@ void sm4cbc(char *pVi, char *input, unsigned int uiLen, char *pKey, char *output
 //		 |      |      |      |      |      |      |1     |      |CBC模式 |
 //-------+------+------+------+------+------+------+------+------+--------+
 //-----------------------------------------------------------------------------
-BOOL AlgSm4(char *pVi, char *pKey, char *pIn, unsigned int uiLen, char *pOut, char ucMode)
+int AlgSm4(char *pVi, char *pKey, char *pIn, unsigned int uiLen, char *pOut, char ucMode)
 {
 	char cEnDe, cEcbCbc;
 	unsigned int iLength;
@@ -306,7 +291,7 @@ BOOL AlgSm4(char *pVi, char *pKey, char *pIn, unsigned int uiLen, char *pOut, ch
 // Return         : 
 // Notice         : 私钥靠传入
 //-----------------------------------------------------------------------------
-BOOL AlgSm2Keygen(char *pSm2PriK, char *pSm2PubK)
+int AlgSm2Keygen(char *pSm2PriK, char *pSm2PubK)
 {
 	char Px[SM2_NUMWORD];
 	char Py[SM2_NUMWORD];
@@ -331,7 +316,7 @@ BOOL AlgSm2Keygen(char *pSm2PriK, char *pSm2PubK)
 // Return         : 
 // Notice         : 
 //-----------------------------------------------------------------------------
-BOOL AlgSm2Encrypt(char *pIn, unsigned short *pusLen, char *pOut, char *pSm2PubK)
+int AlgSm2Encrypt(char *pIn, unsigned short *pusLen, char *pOut, char *pSm2PubK)
 {
 	//char acRandK[SM2_NUMWORD];//todo
 	unsigned  char acRandK[32] = { 0x59,0x27,0x6E,0x27,0xD5,0x06,0x86,0x1A,0x16,0x68,0x0F,0x3A,0xD9,0xC0,0x2D,0xCC,0xEF,0x3C,0xC1,0xFA,0x3C,0xDB,0xE4,0xCE,0x6D,0x54,0xB8,0x0D,0xEA,0xC1,0xBC,0x21 };
@@ -366,7 +351,7 @@ BOOL AlgSm2Encrypt(char *pIn, unsigned short *pusLen, char *pOut, char *pSm2PubK
 	{
 		return FALSE;
 	}
-	TRACESTRBUF("acOutTmp", acOutTmp, sizeof(acOutTmp));
+	//TRACESTRBUF("acOutTmp", acOutTmp, sizeof(acOutTmp));
 	*pusLen = *pusLen + SM2_NUMWORD*3;
 	memmove(pOut, acOutTmp, *pusLen);
 
@@ -382,7 +367,7 @@ BOOL AlgSm2Encrypt(char *pIn, unsigned short *pusLen, char *pOut, char *pSm2PubK
 // Return         : 
 // Notice         : 
 //-----------------------------------------------------------------------------
-BOOL AlgSm2Decrypt(char *pIn, unsigned short *pusLen, char *pOut, char *pSm2PriK)
+int AlgSm2Decrypt(char *pIn, unsigned short *pusLen, char *pOut, char *pSm2PriK)
 {
 	big  dB;
 	char acCipher[0x200];//todo gx 库存在一定问题，这里需要大一点
@@ -402,7 +387,7 @@ BOOL AlgSm2Decrypt(char *pIn, unsigned short *pusLen, char *pOut, char *pSm2PriK
 	dB = mirvar(0);
 
 	bytes_to_big(SM2_NUMWORD, pSm2PriK, dB);
-	printf("*pusLen = %d \r\n", *pusLen);
+	TRACE("*pusLen = %d \r\n", *pusLen);
 	memmove(acCipher, pIn, *pusLen);
 	if (0 != SM2_Decrypt(dB, &acCipher, *pusLen, &acPlain))
 	{
@@ -423,7 +408,7 @@ BOOL AlgSm2Decrypt(char *pIn, unsigned short *pusLen, char *pOut, char *pSm2PriK
 // Return         : 
 // Notice         : 
 //-----------------------------------------------------------------------------
-BOOL AlgSm2Sign(char *pInHash, char ucLen, char *pOut, char *pSm2PriK)
+int AlgSm2Sign(char *pInHash, char ucLen, char *pOut, char *pSm2PriK)
 {
 	char acRandK[32] = { 0x59,0x27,0x6E,0x27,0xD5,0x06,0x86,0x1A,0x16,0x68,0x0F,0x3A,0xD9,0xC0,0x2D,0xCC,0xEF,0x3C,0xC1,0xFA,0x3C,0xDB,0xE4,0xCE,0x6D,0x54,0xB8,0x0D,0xEA,0xC1,0xBC,0x21 };
 	char r[64], s[64];//  Signature
@@ -450,7 +435,7 @@ BOOL AlgSm2Sign(char *pInHash, char ucLen, char *pOut, char *pSm2PriK)
 // Return         : 
 // Notice         : 
 //-----------------------------------------------------------------------------
-BOOL AlgSm2Verify(char *pInHash, char *pucSign, char *pSm2PubK)
+int AlgSm2Verify(char *pInHash, char *pucSign, char *pSm2PubK)
 {
 	if (0 != SM2_Verify_With_E(pInHash, pSm2PubK, pSm2PubK+ SM2_NUMWORD, pucSign, pucSign + SM2_NUMWORD))
 	{
@@ -469,7 +454,7 @@ BOOL AlgSm2Verify(char *pInHash, char *pucSign, char *pSm2PubK)
 // Return         : 
 // Notice         : 
 //-----------------------------------------------------------------------------
-void SAHexStrToByte(const char* source, char* dest, unsigned int sourceLen)
+static int SAHexStrToByte(const char* source, char* dest, unsigned int sourceLen)
 {
 	short i;
 	unsigned char highByte, lowByte;
@@ -499,7 +484,7 @@ void SAHexStrToByte(const char* source, char* dest, unsigned int sourceLen)
 
 		dest[i / 2] = (highByte << 4) | lowByte;
 	}
-	
+	return 0;
 }
 
 
@@ -536,12 +521,13 @@ void SAHexStrToByte(const char* source, char* dest, unsigned int sourceLen)
 // Description    : 
 // Input          : 
 // Output         : 
-// Return         : 
+// Return         : =0 pass ; !=0 error
 // Notice         : 
 //-----------------------------------------------------------------------------
-BOOL AlgSmTest(void)
+int AlgSmTest(int iMode)
 {
-	BOOL bRet;
+	int iRet;
+	int iBack;
 
 	char Sm2PriK[SM2_NUMWORD];
 	char Sm2PubK[SM2_NUMWORD + SM2_NUMWORD];
@@ -566,182 +552,205 @@ BOOL AlgSmTest(void)
 	char acSm4Key[0x10];
 	char acSm4CbcVi[0x10];
 
+	iBack = 0;
+
 	MirsysInit();
 
-#if 1
-	//sm3
-	SAHexStrToByte(SM3_RAW, acTmp, strlen(SM3_RAW));
-	bRet = AlgSm3(&acTmp, 32, acHash, 0);
-	SAHexStrToByte(SM3_RET, acTmp, strlen(SM3_RET));
-	if(!bRet || 0!= memcmp(acHash, acTmp,32))
+	if (iMode & BIT00)
 	{
-		printf("AlgSm3 Fail!!! \r\n");
-	}
-	else
-	{
-		printf("AlgSm3 Pass !!! \r\n");
-	}
-
-	//sm2 generator key
-	SAHexStrToByte(SM2_PRIK, Sm2PriK, strlen(SM2_PRIK));
-	bRet = AlgSm2Keygen(&Sm2PriK, &Sm2PubK);
-	SAHexStrToByte(SM2_PUBK, SM2PubkTmp, strlen(SM2_PUBK));
-	if (!bRet || 0 != memcmp(Sm2PubK, SM2PubkTmp, 64))
-	{
-		printf("AlgSm2Keygen Fail!!! \r\n");
-	}
-	else
-	{
-		printf("AlgSm2Keygen Pass !!! \r\n");
+		//sm3
+		SAHexStrToByte(SM3_RAW, acTmp, strlen(SM3_RAW));
+		iRet = AlgSm3(&acTmp, 32, acHash, 0);
+		SAHexStrToByte(SM3_RET, acTmp, strlen(SM3_RET));
+		if (!iRet || 0 != memcmp(acHash, acTmp, 32))
+		{
+			TRACE("AlgSm3 Fail!!! \r\n");
+			iBack |= BIT00;
+		}
+		else
+		{
+			TRACE("AlgSm3 Pass !!! \r\n");
+		}
 	}
 
-	//sm2 en&de
-	SAHexStrToByte(SM2_PRIK, Sm2PriK, strlen(SM2_PRIK));
-	SAHexStrToByte(SM2_PUBK, Sm2PubK, strlen(SM2_PUBK));
-	SAHexStrToByte(SM2_PLAIN, acSm2Plain, strlen(SM2_PLAIN));
-
-	usPlainLen = sizeof(acSm2Plain);
-	TRACESTRBUF("Sm2PriK", Sm2PriK, sizeof(Sm2PriK));
-	TRACESTRBUF("Sm2PubK", Sm2PubK, sizeof(Sm2PubK));
-	TRACESTRBUF("acSm2Plain", acSm2Plain, sizeof(acSm2Plain));
-
-
-	bRet = AlgSm2Encrypt(acSm2Plain, &usPlainLen, acSm2Cipher, Sm2PubK);
-	if (!bRet)
+	if (iMode & BIT01)
 	{
-		printf("AlgSm2Encrypt Fail!!! \r\n");
-	}
-	else
-	{
-		printf("AlgSm2Encrypt Pass !!! \r\n");
+		//sm2 generator key
+		SAHexStrToByte(SM2_PRIK, Sm2PriK, strlen(SM2_PRIK));
+		iRet = AlgSm2Keygen(&Sm2PriK, &Sm2PubK);
+		SAHexStrToByte(SM2_PUBK, SM2PubkTmp, strlen(SM2_PUBK));
+		if (!iRet || 0 != memcmp(Sm2PubK, SM2PubkTmp, 64))
+		{
+			TRACE("AlgSm2Keygen Fail!!! \r\n");
+			iBack |= BIT01;
+		}
+		else
+		{
+			TRACE("AlgSm2Keygen Pass !!! \r\n");
+		}
 	}
 
-	usCipherLen = usPlainLen;
-	TRACE("usCipherLen = %d \r\n", usCipherLen);
-	TRACESTRBUF("acSm2Cipher", acSm2Cipher, sizeof(acSm2Cipher));
+	if (iMode & BIT02)
+	{
+		//sm2 en&de
+		SAHexStrToByte(SM2_PRIK, Sm2PriK, strlen(SM2_PRIK));
+		SAHexStrToByte(SM2_PUBK, Sm2PubK, strlen(SM2_PUBK));
+		SAHexStrToByte(SM2_PLAIN, acSm2Plain, strlen(SM2_PLAIN));
+
+		usPlainLen = sizeof(acSm2Plain);
+		TRACESTRBUF("Sm2PriK", Sm2PriK, sizeof(Sm2PriK));
+		TRACESTRBUF("Sm2PubK", Sm2PubK, sizeof(Sm2PubK));
+		TRACESTRBUF("acSm2Plain", acSm2Plain, sizeof(acSm2Plain));
 
 
-	bRet = AlgSm2Decrypt(acSm2Cipher, &usCipherLen, acSm2PlainTmp, Sm2PriK);
-	TRACESTRBUF("acSm2PlainTmp", acSm2PlainTmp, sizeof(acSm2PlainTmp));
-	if (!bRet || 0 != memcmp(acSm2Plain, acSm2PlainTmp, usCipherLen))
-	{
-		printf("AlgSm2Decrypt Fail!!! \r\n");
-	}
-	else
-	{
-		printf("AlgSm2Decrypt Pass !!! \r\n");
-	}
+		iRet = AlgSm2Encrypt(acSm2Plain, &usPlainLen, acSm2Cipher, Sm2PubK);
+		if (!iRet)
+		{
+			TRACE("AlgSm2Encrypt Fail!!! \r\n");
+			iBack |= BIT02;
+		}
+		else
+		{
+			TRACE("AlgSm2Encrypt Pass !!! \r\n");
+		}
 
-	//sm2 sign&verify
-	SAHexStrToByte(SM2_PRIK, Sm2PriK, strlen(SM2_PRIK));
-	SAHexStrToByte(SM2_PUBK, Sm2PubK, strlen(SM2_PUBK));
-	SAHexStrToByte(SM2_PLAIN, acSm2Plain, strlen(SM2_PLAIN));
-	SAHexStrToByte(SM3_RET, acHash, strlen(SM3_RET));
+		usCipherLen = usPlainLen;
+		TRACE("usCipherLen = %d \r\n", usCipherLen);
+		TRACESTRBUF("acSm2Cipher", acSm2Cipher, sizeof(acSm2Cipher));
 
 
-	AlgSm2Sign(acHash, 0, acSm2Sign, Sm2PriK);
-	TRACESTRBUF("acSm2Sign", acSm2Sign, sizeof(acSm2Sign));
-	if (!bRet)
-	{
-		printf("AlgSm2Sign Fail!!! \r\n");
-	}
-	else
-	{
-		printf("AlgSm2Sign Pass !!! \r\n");
-	}
-	
-	//true sign
-	bRet = AlgSm2Verify(acHash, acSm2Sign, Sm2PubK);
-	if (!bRet)
-	{
-		printf("AlgSm2Verify Fail 1 !!! \r\n");
-	}
-	else
-	{
-		printf("AlgSm2Verify Pass 1 !!! \r\n");
+		iRet = AlgSm2Decrypt(acSm2Cipher, &usCipherLen, acSm2PlainTmp, Sm2PriK);
+		TRACESTRBUF("acSm2PlainTmp", acSm2PlainTmp, sizeof(acSm2PlainTmp));
+		if (!iRet || 0 != memcmp(acSm2Plain, acSm2PlainTmp, usCipherLen))
+		{
+			TRACE("AlgSm2Decrypt Fail!!! \r\n");
+			iBack |= BIT02;
+		}
+		else
+		{
+			TRACE("AlgSm2Decrypt Pass !!! \r\n");
+		}
 	}
 
-	//fake sign
-	SAHexStrToByte(SM3_RAW, acHash, strlen(SM3_RAW));
-	bRet = AlgSm2Verify(acHash, acSm2Sign, Sm2PubK);
-	if (bRet)
+	if (iMode & BIT03)
 	{
-		printf("AlgSm2Verify Fail 2 !!! \r\n");
-	}
-	else
-	{
-		printf("AlgSm2Verify Pass 2 !!! \r\n");
+		//sm2 sign&verify
+		SAHexStrToByte(SM2_PRIK, Sm2PriK, strlen(SM2_PRIK));
+		SAHexStrToByte(SM2_PUBK, Sm2PubK, strlen(SM2_PUBK));
+		SAHexStrToByte(SM2_PLAIN, acSm2Plain, strlen(SM2_PLAIN));
+		SAHexStrToByte(SM3_RET, acHash, strlen(SM3_RET));
+
+
+		iRet = AlgSm2Sign(acHash, 0, acSm2Sign, Sm2PriK);
+		TRACESTRBUF("acSm2Sign", acSm2Sign, sizeof(acSm2Sign));
+		if (!iRet)
+		{
+			TRACE("AlgSm2Sign Fail!!! \r\n");
+			iBack |= BIT03;
+		}
+		else
+		{
+			TRACE("AlgSm2Sign Pass !!! \r\n");
+		}
+
+		//true sign
+		iRet = AlgSm2Verify(acHash, acSm2Sign, Sm2PubK);
+		if (!iRet)
+		{
+			TRACE("AlgSm2Verify Fail 1 !!! \r\n");
+			iBack |= BIT03;
+		}
+		else
+		{
+			TRACE("AlgSm2Verify Pass 1 !!! \r\n");
+		}
+
+		//fake sign
+		SAHexStrToByte(SM3_RAW, acHash, strlen(SM3_RAW));
+		iRet = AlgSm2Verify(acHash, acSm2Sign, Sm2PubK);
+		if (iRet)
+		{
+			TRACE("AlgSm2Verify Fail 2 !!! \r\n");
+			iBack |= BIT03;
+		}
+		else
+		{
+			TRACE("AlgSm2Verify Pass 2 !!! \r\n");
+		}
 	}
 
-#endif
 
 	//sm4
-	//ecb
+	if (iMode & BIT04)//ecb
+	{
+		SAHexStrToByte(SM4_ECB_PLAINT, acSm4Plain, strlen(SM4_ECB_PLAINT));
+		SAHexStrToByte(SM4_ECB_CIPHER, acSm4PlainTmp, strlen(SM4_ECB_CIPHER));
+		SAHexStrToByte(SM4_KEY, acSm4Key, strlen(SM4_KEY));
 
-#if 1
-	SAHexStrToByte(SM4_ECB_PLAINT, acSm4Plain, strlen(SM4_ECB_PLAINT));
-	SAHexStrToByte(SM4_ECB_CIPHER, acSm4PlainTmp, strlen(SM4_ECB_CIPHER));
-	SAHexStrToByte(SM4_KEY, acSm4Key, strlen(SM4_KEY));
+		iRet = AlgSm4(NULL, acSm4Key, acSm4Plain, sizeof(acSm4Plain), acSm4Cipher, SMS4_ECB_MODE | SMS4_ENCRYPT);
+		TRACESTRBUF("acSm4Cipher", acSm4Cipher, sizeof(acSm4Cipher));
+		if (!iRet || 0!= memcmp(acSm4Cipher, acSm4PlainTmp, sizeof(acSm4Cipher)))
+		{
+			TRACE("AlgSm4 ECB EN Fail!!! \r\n");
+			iBack |= BIT04;
+		}
+		else
+		{
+			TRACE("AlgSm4 ECB EN Pass !!! \r\n");
+		}
 
-	bRet = AlgSm4(NULL, acSm4Key, acSm4Plain, sizeof(acSm4Plain), acSm4Cipher, SMS4_ECB_MODE | SMS4_ENCRYPT);
-	TRACESTRBUF("acSm4Cipher", acSm4Cipher, sizeof(acSm4Cipher));
-	if (!bRet || 0!= memcmp(acSm4Cipher, acSm4PlainTmp, sizeof(acSm4Cipher)))
-	{
-		printf("AlgSm4 ECB EN Fail!!! \r\n");
-	}
-	else
-	{
-		printf("AlgSm4 ECB EN Pass !!! \r\n");
-	}
-
-	SAHexStrToByte(SM4_ECB_PLAINT, acSm4PlainTmp, strlen(SM4_ECB_PLAINT));
-	memset(acSm4Plain, 0, sizeof(acSm4Plain));
-	bRet = AlgSm4(NULL, acSm4Key, acSm4Cipher, sizeof(acSm4Cipher), acSm4Plain, SMS4_ECB_MODE | SMS4_DECRYPT);
-	TRACESTRBUF("acSm4Plain", acSm4Plain, sizeof(acSm4Plain));
-	if (!bRet || 0 != memcmp(acSm4Plain, acSm4PlainTmp, sizeof(acSm4Plain)))
-	{
-		printf("AlgSm4 ECB DE Fail!!! \r\n");
-	}
-	else
-	{
-		printf("AlgSm4 ECB DE Pass !!! \r\n");
-	}
-#endif
-
-#if 1
-	//cbc
-	SAHexStrToByte(SM4_CBC_PLAINT, acSm4Plain, strlen(SM4_CBC_PLAINT));
-	SAHexStrToByte(SM4_KEY, acSm4Key, strlen(SM4_KEY));
-	SAHexStrToByte(SM4_CBC_VI, acSm4CbcVi, strlen(SM4_CBC_VI));
-	SAHexStrToByte(SM4_CBC_CIPHER, acSm4PlainTmp, strlen(SM4_CBC_CIPHER));
-
-	
-	bRet = AlgSm4(acSm4CbcVi, acSm4Key, acSm4Plain, sizeof(acSm4Plain), acSm4Cipher, SMS4_CBC_MODE | SMS4_ENCRYPT);
-	TRACESTRBUF("acSm4Cipher", acSm4Cipher, sizeof(acSm4Cipher));
-	if (!bRet || 0!= memcmp(acSm4Cipher, acSm4PlainTmp, sizeof(acSm4Cipher)))
-	{
-		printf("AlgSm4 CBC EN Fail!!! \r\n");
-	}
-	else
-	{
-		printf("AlgSm4 CBC EN Pass !!! \r\n");
+		SAHexStrToByte(SM4_ECB_PLAINT, acSm4PlainTmp, strlen(SM4_ECB_PLAINT));
+		memset(acSm4Plain, 0, sizeof(acSm4Plain));
+		iRet = AlgSm4(NULL, acSm4Key, acSm4Cipher, sizeof(acSm4Cipher), acSm4Plain, SMS4_ECB_MODE | SMS4_DECRYPT);
+		TRACESTRBUF("acSm4Plain", acSm4Plain, sizeof(acSm4Plain));
+		if (!iRet || 0 != memcmp(acSm4Plain, acSm4PlainTmp, sizeof(acSm4Plain)))
+		{
+			TRACE("AlgSm4 ECB DE Fail!!! \r\n");
+			iBack |= BIT04;
+		}
+		else
+		{
+			TRACE("AlgSm4 ECB DE Pass !!! \r\n");
+		}
 	}
 
-	SAHexStrToByte(SM4_CBC_PLAINT, acSm4PlainTmp, strlen(SM4_CBC_PLAINT));
-	memset(acSm4Plain, 0, sizeof(acSm4Plain));
-	bRet = AlgSm4(acSm4CbcVi, acSm4Key, acSm4Cipher, sizeof(acSm4Cipher), acSm4Plain, SMS4_CBC_MODE | SMS4_DECRYPT);
-	TRACESTRBUF("acSm4Plain", acSm4Plain, sizeof(acSm4Plain));
-	if (!bRet || 0 != memcmp(acSm4PlainTmp, acSm4Plain, sizeof(acSm4PlainTmp)))
+	if (iMode & BIT05)
 	{
-		printf("AlgSm4 CBC DE Fail!!! \r\n");
-	}
-	else
-	{
-		printf("AlgSm4 CBC DE Pass !!! \r\n");
-	}
-#endif
+		//cbc
+		SAHexStrToByte(SM4_CBC_PLAINT, acSm4Plain, strlen(SM4_CBC_PLAINT));
+		SAHexStrToByte(SM4_KEY, acSm4Key, strlen(SM4_KEY));
+		SAHexStrToByte(SM4_CBC_VI, acSm4CbcVi, strlen(SM4_CBC_VI));
+		SAHexStrToByte(SM4_CBC_CIPHER, acSm4PlainTmp, strlen(SM4_CBC_CIPHER));
 
-	return TRUE;
+
+		iRet = AlgSm4(acSm4CbcVi, acSm4Key, acSm4Plain, sizeof(acSm4Plain), acSm4Cipher, SMS4_CBC_MODE | SMS4_ENCRYPT);
+		TRACESTRBUF("acSm4Cipher", acSm4Cipher, sizeof(acSm4Cipher));
+		if (!iRet || 0 != memcmp(acSm4Cipher, acSm4PlainTmp, sizeof(acSm4Cipher)))
+		{
+			TRACE("AlgSm4 CBC EN Fail!!! \r\n");
+			iBack |= BIT05;
+		}
+		else
+		{
+			TRACE("AlgSm4 CBC EN Pass !!! \r\n");
+		}
+
+		SAHexStrToByte(SM4_CBC_PLAINT, acSm4PlainTmp, strlen(SM4_CBC_PLAINT));
+		memset(acSm4Plain, 0, sizeof(acSm4Plain));
+		iRet = AlgSm4(acSm4CbcVi, acSm4Key, acSm4Cipher, sizeof(acSm4Cipher), acSm4Plain, SMS4_CBC_MODE | SMS4_DECRYPT);
+		TRACESTRBUF("acSm4Plain", acSm4Plain, sizeof(acSm4Plain));
+		if (!iRet || 0 != memcmp(acSm4PlainTmp, acSm4Plain, sizeof(acSm4PlainTmp)))
+		{
+			TRACE("AlgSm4 CBC DE Fail!!! \r\n");
+			iBack |= BIT05;
+		}
+		else
+		{
+			TRACE("AlgSm4 CBC DE Pass !!! \r\n");
+		}
+	}
+
+	return iBack;
 }
 
 

@@ -21,8 +21,8 @@ This  SM2  implementation  is  created  on  MIRACL.  SM2  implementation  source
 #ifndef __SM2_H__
 #define __SM2_H__
 
-#include "../inc/miracl.h" 
-#include "../inc/mirdef.h" 
+#include "miracl.h" 
+#include "mirdef.h" 
 #include <string.h> 
 #include <malloc.h> 
 
@@ -33,6 +33,9 @@ This  SM2  implementation  is  created  on  MIRACL.  SM2  implementation  source
 #define SM2_NUMBITS 	        256
 #define	SM2_NUMWORD				(SM2_NUMBITS/ECC_WORDSIZE)    //32
 
+
+
+#define ERR_SM_OK				0x00000000
 #define ERR_INFINITY_POINT	    0x00000001
 #define ERR_NOT_VALID_ELEMENT	0x00000002
 #define ERR_NOT_VALID_POINT		0x00000003

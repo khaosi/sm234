@@ -13,43 +13,45 @@
 */
 
 #include <stdio.h>
-#include "../inc/sm3.h"
-#include "../inc/sm4.h"
-#include "../inc/sm2.h"
-#include "../inc/miracl.h"
+#include "sm.h"
 
- 
-
-extern BOOL AlgSmTest(void);
 
 int main(int argc, char **argv)
 {
     int iResult;
 
 	//todo miracl需要初始化
-#if 0
+#if 1
     iResult = SM3_SelfTest();
 
-    printf("SM3_SelfTest = %04x \r\n", iResult);
+    TRACE("#SM3_SelfTest = %08x \r\n", iResult);
 
 	iResult = SM4_SelfTest();
 
-	printf("SM4_SelfTest = %04x \r\n", iResult);	
+	TRACE("#SM4_SelfTest = %08x \r\n", iResult);	
 	
 	
 	iResult = SM2_EnDeTest();
 
-	printf("SM2_EnDeTest = %04x \r\n", iResult);	
+	TRACE("#SM2_EnDeTest = %08x \r\n", iResult);	
 	
 	
 	iResult = SM2_SignVerifyTest();
 
-	printf("SM2_SignVerifyTest() = %04x \r\n", iResult);
+	TRACE("#SM2_SignVerifyTest = %08x \r\n", iResult);
 #endif
 
-	AlgSmTest();
+	iResult = AlgSmTest(BIT00| BIT01| BIT02| BIT03| BIT04| BIT05);
+	if (0 == iResult)
+	{
+		TRACE("\r\n#SM Selftest Pass!!!\r\n");
+	}
+	else
+	{
+		TRACE("\r\n#SM Selftest Fail!!!\r\n");
+	}
 
-    printf("Press anykey to continue\r\n");
+    TRACE("\r\nPress anykey to continue\r\n");
 
     getchar();
 

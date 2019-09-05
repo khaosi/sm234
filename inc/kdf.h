@@ -28,7 +28,7 @@ Modification:  Adding  notes  to  all  the  functions
 ************************************************************************/
 
 #include  <string.h>
-#include "../inc/sm3.h"
+#include "sm3.h"
 
 extern void  BiToWj(unsigned  long  Bi[],  unsigned  long  Wj[]); 
 extern void  WjToWj1(unsigned  long  Wj[],  unsigned  long  Wj1[]);
