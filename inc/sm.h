@@ -40,6 +40,8 @@ int SM2_SignVerifyTest();
 int SM2_EnDeTest();
 int SM3_SelfTest();
 
+int SM2_KeyEX_SelfTest();
+
 int AlgSmTest(void);
 //API
 

@@ -39,6 +39,12 @@ int main(int argc, char **argv)
 	iResult = SM2_SignVerifyTest();
 
 	TRACE("#SM2_SignVerifyTest = %08x \r\n", iResult);
+
+	iResult = SM2_KeyEX_SelfTest();
+
+	TRACE("#SM2_KeyEX_SelfTest = %08x \r\n", iResult);
+
+
 #endif
 
 	iResult = AlgSmTest(BIT00| BIT01| BIT02| BIT03| BIT04| BIT05);
