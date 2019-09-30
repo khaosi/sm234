@@ -45,7 +45,14 @@ int main(int argc, char **argv)
 	TRACE("#SM2_KeyEX_SelfTest = %08x \r\n", iResult);
 
 
+	TRACE("\r\nPress anykey to continue\r\n");
+
+	getchar();
+
+
 #endif
+
+	return 0;
 
 	iResult = AlgSmTest(BIT00| BIT01| BIT02| BIT03| BIT04| BIT05);
 	if (0 == iResult)

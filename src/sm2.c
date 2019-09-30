@@ -1070,9 +1070,28 @@ Return:	0: sucess
 4: not a point of order n
 Others:
 ****************************************************************/
+
+int _SM2_KeyGeneration(big priKey, epoint *pubKey)
+{
+	int i = 0;
+	big x, y;
+	x = mirvar(0);
+	y = mirvar(0);
+	//mip= mirsys(1000, 16);
+	//mip->IOBASE=16;
+	ecurve_mult(priKey, G, pubKey);//通过大数和基点产生公钥
+	epoint_get(pubKey, x, y);
+	i = Test_PubKey(pubKey);
+	if (i)
+		return i;
+	else
+		return 0;
+}
+
+
 int SM2_KeyEx_Init_I(big ra, epoint* RA)
 {
-	return SM2_KeyGeneration(ra, RA->X, RA->Y);
+	return _SM2_KeyGeneration(ra, RA);
 }
 
 /****************************************************************
@@ -1131,7 +1150,7 @@ int SM2_KeyEx_Re_I(big rb, big dB, epoint* RA, epoint* PA, unsigned char ZA[], u
 	w = SM2_W(para_n);
 
 	//--------B2: RB=[rb]G=(x2,y2)--------
-	SM2_KeyGeneration(rb, RB->X, RB->Y);
+	_SM2_KeyGeneration(rb, RB);
 	epoint_get(RB, x2, y2);
 	big_to_bytes(SM2_NUMWORD, x2, x2y2, 1);
 	big_to_bytes(SM2_NUMWORD, y2, x2y2 + SM2_NUMWORD, 1);
@@ -1457,6 +1476,9 @@ int SM2_KeyEX_SelfTest()
 	int std_Klen = 128;//bit len 
 	int temp;
 
+	int aiKA[32];//
+	int aiKB[32];
+
 	big x, y, dA, dB, rA, rB;
 	epoint* pubKeyA, *pubKeyB, *RA, *RB, *V;
 
@@ -1468,11 +1490,17 @@ int SM2_KeyEX_SelfTest()
 	unsigned char SA[SM3_len / 8];
 
 
-	KA = malloc(std_Klen / 8);
-	KB = malloc(std_Klen / 8);
+/*	KA = malloc(std_Klen / 8);
+	KB = malloc(std_Klen / 8);*/	
+	
+	KA = aiKA;// malloc(std_Klen / 8); 动态内存分配存在溢出情况，改用栈
+	KB = aiKB;// malloc(std_Klen / 8);
 
-	mip = mirsys(1000, 16);
-	mip->IOBASE = 16;
+
+	MirsysInit();
+
+	//mip = mirsys(1000, 16);
+	//mip->IOBASE = 16;
 
 	x = mirvar(0);
 	y = mirvar(0);
@@ -1532,8 +1560,8 @@ int SM2_KeyEX_SelfTest()
 	if (SM2_KeyEx_Re_II(V, RA, RB, ZA, ZB, SA) != 0)
 		return ERR_EQUAL_S2SA;
 
-	free(KA);
-	free(KB);
+	//free(KA);
+	//free(KB);
 
 	return 0;
 }

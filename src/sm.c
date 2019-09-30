@@ -283,6 +283,57 @@ int AlgSm4(char *pVi, char *pKey, char *pIn, unsigned int uiLen, char *pOut, cha
 	return TRUE;
 }
 
+//----------------------------------------------------------------------------- 
+// 名称：MacFillData
+// 功能：填充数据
+// 参数：pBuf，数据缓冲
+//		 BufLen，数据长度
+// 返回：填充完数据长度
+// 说明：
+//----------------------------------------------------------------------------- 
+static unsigned short MacFillData(char *pBuf, unsigned short BufLen)
+{
+	pBuf[BufLen] = 0x80;
+
+	memset(pBuf + BufLen + 0x01, 0x00, 0x10 - ((BufLen % 0x10) + 0x01));
+
+	return BufLen + 0x10 - (BufLen % 0x10);
+}
+
+//-----------------------------------------------------------------------------
+// Function Name  : AlgSm4Mac
+// Description    : 
+// Input          : 
+// Output         : 
+// Return         : 
+// Notice         : 
+//-----------------------------------------------------------------------------
+int AlgSm4Mac(char *pBuf, unsigned short BufLen, char *pKey, char * Output)
+{
+	char Vet[16];
+	char acSM4Buf[1024];
+
+	memset(Vet, 0x00, sizeof(Vet));
+
+	TRACE("In CalMac Vet:");
+	TRACEBUF(Vet, 16);
+
+	BufLen = MacFillData(pBuf, BufLen);
+
+	TRACE("In CalMac FillData:");
+	TRACEBUF(pBuf, BufLen);
+
+	AlgSm4(Vet, pKey, pBuf, BufLen,acSM4Buf, SMS4_CBC_MODE | SMS4_ENCRYPT);
+
+	TRACE("In CalMac Alg:");
+	TRACEBUF(pBuf, BufLen);
+
+	memcpy(Output, acSM4Buf, 4);
+
+	return TRUE;
+
+}
+
 //-----------------------------------------------------------------------------
 // Function Name  : AlgSm2Keygen
 // Description    : 
