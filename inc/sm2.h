@@ -27,10 +27,13 @@ This  SM2  implementation  is  created  on  MIRACL.  SM2  implementation  source
 #include <malloc.h> 
 
 
+
 #define ECC_WORDSIZE 	        8
 #define	SM2_WORDSIZE			8	
 #define SM2_NUMBITS 	        256
 #define	SM2_NUMWORD				(SM2_NUMBITS/ECC_WORDSIZE)    //32
+
+
 
 #define ERR_SM_OK				0x00000000
 #define ERR_INFINITY_POINT	    0x00000001
@@ -61,12 +64,12 @@ This  SM2  implementation  is  created  on  MIRACL.  SM2  implementation  source
 #define  ERR_SELFTEST_INI_I	    0x00000017 
 #define  ERR_SELFTEST_RES_I	    0x00000018 
 #define  ERR_SELFTEST_INI_II	0x00000019
- 
 
+//init
+void MirsysInit(void);
 int SM2_Init();
 
-void MirsysInit(void);
-
+//test para
 int Test_Point(epoint*  point);
 int Test_PubKey(epoint  *pubKey);
 int Test_Null(unsigned  char  array[],int  len); 
@@ -74,28 +77,30 @@ int Test_Zero(big  x);
 int Test_n(big  x);
 int Test_Range(big  x);
 
+//gen key
 int SM2_KeyGenerationByPriKey(big  priKey,epoint  *pubKey);
 int SM2_KeyGeneration(unsigned  char  PriKey[], unsigned  char  Px[], unsigned  char  Py[]);
 
+//en/decrypt
 int SM2_Encrypt(unsigned  char*  randK,epoint  *pubKey,unsigned  char  M[],int  klen,unsigned  char C[]);
 int SM2_Decrypt(big  dB,unsigned  char  C[],int  Clen,unsigned  char  M[]);
 
+//sign verify
 int SM2_Sign(unsigned  char  *message, int  len, unsigned  char  ZA[], unsigned  char  rand[], unsigned char  d[], unsigned  char  R[], unsigned  char  S[]);
 int SM2_Sign_With_E(char * pHash, char rand[], char d[], char R[], char S[]);
 int SM2_Verify(unsigned  char  *message, int  len, unsigned  char  ZA[], unsigned  char  Px[], unsigned char  Py[], unsigned  char  R[], unsigned  char  S[]);
 int SM2_Verify_With_E(char * pHash, char Px[], char Py[], char R[], char S[]);
 
 //key exchange
-int  SM2_W(big  n);
-void  SM3_Z(unsigned  char  ID[], unsigned  short  int  ELAN, epoint*  pubKey, unsigned  char  hash[]);
-int  SM2_KeyEx_Init_I(big  ra, epoint*  RA);
-int  SM2_KeyEx_Re_I(big  rb, big  dB, epoint*  RA, epoint*  PA, unsigned  char  ZA[], unsigned  char ZB[], unsigned  char  K[], int  klen, epoint*  RB, epoint*  V, unsigned  char  hash[]);
-int  SM2_KeyEx_Init_II(big  ra, big  dA, epoint*  RA, epoint*  RB, epoint*  PB, unsigned  char ZA[], unsigned  char  ZB[], unsigned  char  SB[], unsigned  char  K[], int  klen, unsigned  char  SA[]);
-int  SM2_KeyEx_Re_II(epoint  *V, epoint  *RA, epoint  *RB, unsigned  char  ZA[], unsigned  char ZB[], unsigned  char  SA[]);
+void SM3_Z(unsigned  char  ID[], unsigned  short  int  ELAN, epoint*  pubKey, unsigned  char  hash[]);
+int SM2_W(big  n);
+int SM2_KeyEx_Init_I(big  ra, epoint*  RA);
+int SM2_KeyEx_Re_I(big  rb, big  dB, epoint*  RA, epoint*  PA, unsigned  char  ZA[], unsigned  char ZB[], unsigned  char  K[], int  klen, epoint*  RB, epoint*  V, unsigned  char  hash[]);
+int SM2_KeyEx_Init_II(big  ra, big  dA, epoint*  RA, epoint*  RB, epoint*  PB, unsigned  char ZA[], unsigned  char  ZB[], unsigned  char  SB[], unsigned  char  K[], int  klen, unsigned  char  SA[]);
+int SM2_KeyEx_Re_II(epoint  *V, epoint  *RA, epoint  *RB, unsigned  char  ZA[], unsigned  char ZB[], unsigned  char  SA[]);
 
-int  SM2_KeyEx_SelfTest();
-
-
+//test function
+int SM2_KeyEx_SelfTest();
 int SM2_SignVerifyTest();
 int SM2_EnDeTest();
  

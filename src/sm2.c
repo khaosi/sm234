@@ -32,7 +32,7 @@ epoint  *G, *nG;
 miracl  *mip;
 
 //-----------------------------------------------------------------------------
-// Function Name  : SAHexStrToByte
+// Function Name  : MirsysInit
 // Description    : 
 // Input          : 
 // Output         : 

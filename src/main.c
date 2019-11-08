@@ -15,53 +15,24 @@
 #include <stdio.h>
 #include "sm.h"
 
-
+#ifndef DLL_ENABLE
 int main(int argc, char **argv)
 {
     int iResult;
 
-	//todo miracl需要初始化
-#if 1
-    iResult = SM3_SelfTest();
+	//todo miracl init
+	MirsysInit();
 
-    TRACE("#SM3_SelfTest = %08x \r\n", iResult);
-
-	iResult = SM4_SelfTest();
-
-	TRACE("#SM4_SelfTest = %08x \r\n", iResult);	
-	
-	
-	iResult = SM2_EnDeTest();
-
-	TRACE("#SM2_EnDeTest = %08x \r\n", iResult);	
-	
-	
-	iResult = SM2_SignVerifyTest();
-
-	TRACE("#SM2_SignVerifyTest = %08x \r\n", iResult);
-
-	iResult = SM2_KeyEX_SelfTest();
-
-	TRACE("#SM2_KeyEX_SelfTest = %08x \r\n", iResult);
-
-
-	TRACE("\r\nPress anykey to continue\r\n");
-
-	getchar();
-
-
-#endif
-
-	return 0;
+	//SM_SelfTest();
 
 	iResult = AlgSmTest(BIT00| BIT01| BIT02| BIT03| BIT04| BIT05);
 	if (0 == iResult)
 	{
-		TRACE("\r\n#SM Selftest Pass!!!\r\n");
+		TRACE("\r\n# SM AlgSmTest Pass!!!\r\n");
 	}
 	else
 	{
-		TRACE("\r\n#SM Selftest Fail!!!\r\n");
+		TRACE("\r\n# ERR:SM AlgSmTest Fail!!!\r\n");
 	}
 
     TRACE("\r\nPress anykey to continue\r\n");
@@ -70,3 +41,4 @@ int main(int argc, char **argv)
 
     return 0;
 }
+#endif

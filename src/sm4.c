@@ -146,7 +146,7 @@ void  SM4_Encrypt(unsigned  char  MK[],unsigned  char  PlainText[],unsigned  cha
 }
 
 /************************************************************ 
- * Function:
+Function:
 void SM4_Decrypt(unsigned char MK[],unsigned char CipherText[], unsigned char PlainText[]); 
 Description:
  
